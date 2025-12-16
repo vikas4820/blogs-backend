@@ -4,9 +4,11 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Blogs } from '../blog/blog.entity';
 
 @Entity() 
 export class BlogsCategories extends BaseEntity {
@@ -21,6 +23,9 @@ export class BlogsCategories extends BaseEntity {
 
   @Column({ default: 'active' })
   status: string;
+
+  @OneToMany(() => Blogs, (blog) => blog.blogCategory)
+  blogs: Blogs[];
 
   @CreateDateColumn()
   createdAt: Date;

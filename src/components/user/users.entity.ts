@@ -9,11 +9,13 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  OneToMany,
 } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { Roles } from './roles.entity';
 import { IsString, IsNotEmpty, MinLength, MaxLength, IsEmail, IsInt, IsOptional } from 'class-validator';
 import { Exclude } from 'class-transformer';
+import { Blogs } from '../blog/blog.entity';
 
 @Entity('users')
 export class Users extends BaseEntity {
@@ -42,6 +44,9 @@ export class Users extends BaseEntity {
   @JoinColumn({ name: 'roleId' })
   @IsOptional() 
   role: Roles;
+
+  @OneToMany(() => Blogs, (blog) => blog.user)
+  blogs: Blogs[];
 
   @CreateDateColumn()
   @Exclude() 
