@@ -77,4 +77,31 @@ export class UserService {
 
     return { access_token };
   }
+
+  async findAll(): Promise<Users[]> {
+    try {
+      return await this.usersRepository.find();
+    } catch (error) {
+      throw new HttpException(
+        `${error?.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR
+      )
+    }
+  }
+
+  async getAllCount(): Promise<{ all: number, active: number, inactive: number }> {
+    try {
+      const allCount = await this.usersRepository.count();
+      const activeCount = await this.usersRepository.count({ where: { status: 'active' } });
+      const inactiveCount = await this.usersRepository.count({ where: { status: 'inactive' } });
+      return { all: allCount, active: activeCount, inactive: inactiveCount };
+    } catch (error) {
+      throw new HttpException(
+        `${error?.message || 'Error retrieving user counts'}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+  
+  
 }

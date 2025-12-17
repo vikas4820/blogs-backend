@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { BlogCategoryService } from './blog-category.service';
 import { BlogsCategoriesDto } from './blog-category.dto';
 import { BlogsCategories } from './blog-category.entity';
@@ -15,5 +15,32 @@ export class BlogCategoryController {
   @Get()
   async findAll() {
     return await this.blogCategoryService.findAll();
+  }
+
+  @Get('count')
+  async getAllCount() {
+    return await this.blogCategoryService.getAllCount();
+  }
+
+  @Get(':id')
+  async findOne(
+    @Param('id') id: number
+  ) {
+    return await this.blogCategoryService.findOne(id);
+  }
+
+  @Put(':id')
+  async update(
+    @Param('id') id: number,
+    @Body() createBlogCategoryDto: BlogsCategoriesDto
+  ) {
+    return await this.blogCategoryService.update(id, createBlogCategoryDto);
+  }
+
+  @Delete(':id')
+  async removeCategory(
+    @Param('id') id: number
+  ) {
+    return await this.blogCategoryService.removeCategory(id);
   }
 }

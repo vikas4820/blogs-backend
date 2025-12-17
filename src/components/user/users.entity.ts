@@ -48,6 +48,9 @@ export class Users extends BaseEntity {
   @OneToMany(() => Blogs, (blog) => blog.user)
   blogs: Blogs[];
 
+  @Column({ default: 'active' })
+  status: string;
+
   @CreateDateColumn()
   @Exclude() 
   createdAt: Date;
