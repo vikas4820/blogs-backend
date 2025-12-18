@@ -72,7 +72,7 @@ export class UserService {
       throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
     }
 
-    const payload = { username: user.username, sub: user.id };
+    const payload = { username: user.username, sub: user.id, role: user.role };
     const access_token = this.authService.generateJwtToken(payload);
 
     return { access_token };

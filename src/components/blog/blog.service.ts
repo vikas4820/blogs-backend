@@ -3,6 +3,7 @@ import { BlogsCategoriesDto } from '../blog-category/blog-category.dto';
 import { Blogs } from './blog.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CreateBlogDto } from './blog.dto';
 
 @Injectable()
 export class BlogService {
@@ -32,6 +33,37 @@ export class BlogService {
                 `${error?.message || 'Error retrieving blog category counts'}`,
                 HttpStatus.INTERNAL_SERVER_ERROR,
             );
+        }
+    }
+
+    async findOne(id: number): Promise<Blogs|null> {
+        try {
+            return await this.blogsRepository.findOne({
+                where: { id: id }
+            });
+        } catch (error) {
+            throw new HttpException(
+                `${error.message}`,
+                HttpStatus.INTERNAL_SERVER_ERROR
+            )
+        }
+    }
+
+    async create(blogsDto: CreateBlogDto): Promise<Blogs|undefined> {
+        try {
+            const category = this.blogsRepository.create(blogsDto);
+            return await this.blogsRepository.save(category);
+        } catch (error) {
+            if (error.code === 'ER_DUP_ENTRY') {
+                throw new HttpException(
+                    'Blog already exists',
+                    HttpStatus.CONFLICT,
+                );
+            }
+            throw new HttpException(
+                `${error.message}`,
+                HttpStatus.INTERNAL_SERVER_ERROR
+            )
         }
     }
 }
