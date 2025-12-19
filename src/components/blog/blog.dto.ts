@@ -1,4 +1,6 @@
 import { IsString, IsNotEmpty, MinLength, MaxLength, IsEmail, IsInt, IsOptional, IsEnum } from 'class-validator';
+import { BlogsCategories } from '../blog-category/blog-category.entity';
+import { Users } from '../user/users.entity';
 export class CreateBlogDto {
   @IsString()
   @IsNotEmpty({ message: 'Title is required' })
@@ -12,13 +14,17 @@ export class CreateBlogDto {
 
   @IsInt({ message: 'Category ID must be an integer' })
   @IsNotEmpty({ message: 'Category ID is required' })
-  categoryId: number;
+  blogCategory: BlogsCategories;
+
+  @IsInt({ message: 'User ID must be an integer' })
+  @IsOptional()
+  user?: Users;
 
   @IsString()
   @IsNotEmpty({ message: 'Short description is required' })
   shortDescription: string;
 
-  @IsString()
+  @IsString() 
   @IsNotEmpty({ message: 'Content is required' })
   content: string;
 
@@ -53,7 +59,11 @@ export class UpdateBlogDto {
 
   @IsInt({ message: 'Category ID must be an integer' })
   @IsOptional()
-  categoryId?: number;
+  blogCategory?: BlogsCategories;
+
+  @IsInt({ message: 'User ID must be an integer' })
+  @IsOptional()
+  user?: Users;
 
   @IsString()
   @IsOptional()

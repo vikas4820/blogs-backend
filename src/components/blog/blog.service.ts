@@ -13,7 +13,9 @@ export class BlogService {
 
     async findAll(): Promise<Blogs[]> {
         try {
-            return await this.blogsRepository.find();
+            return await this.blogsRepository.find({
+                relations: ['user', 'blogCategory']
+            });
         } catch (error) {
             throw new HttpException(
                 `${error?.message}`,
@@ -39,7 +41,11 @@ export class BlogService {
     async findOne(id: number): Promise<Blogs|null> {
         try {
             return await this.blogsRepository.findOne({
-                where: { id: id }
+                where: { id: id },
+                relations: [
+                    'user',
+                    'blogCategory'
+                ]
             });
         } catch (error) {
             throw new HttpException(

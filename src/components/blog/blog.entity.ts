@@ -4,6 +4,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -21,9 +22,6 @@ export class Blogs extends BaseEntity {
 
   @Column({ length: 220, unique: true })
   slug: string;
-
-  @Column({ type: 'int' })
-  categoryId: number;
 
   @Column({ type: 'text' })
   shortDescription: string;
