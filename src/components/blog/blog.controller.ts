@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { BlogService } from './blog.service';
 import { CreateBlogDto } from './blog.dto';
 import { Blogs } from './blog.entity';
@@ -10,8 +10,11 @@ export class BlogController {
   ) {}
 
   @Get()
-  async findAll() {
-    return await this.blogService.findAll();
+  async findAll(
+    @Query('page') page = 1,
+    @Query('limit') limit = 5,
+  ) {
+    return await this.blogService.findAll(+page, +limit);
   }
 
   @Get('count')

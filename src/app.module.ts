@@ -8,6 +8,8 @@ import { SettingsModule } from './settings/settings.module';
 import { BlogCategoryModule } from './components/blog-category/blog-category.module';
 import { BlogModule } from './components/blog/blog.module';
 import { ConfigModule } from '@nestjs/config';
+import { BlogSliderModule } from './components/blog-slider/blog-slider.module';
+import { BlogTestimonialModule } from './components/blog-testimonial/blog-testimonial.module';
 
 @Module({
   imports: [
@@ -29,7 +31,9 @@ import { ConfigModule } from '@nestjs/config';
     UserModule,
     SettingsModule,
     BlogCategoryModule,
-    BlogModule
+    BlogModule,
+    BlogSliderModule,
+    BlogTestimonialModule
   ],
   controllers: [AppController],
   providers: [AppService],

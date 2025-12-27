@@ -11,16 +11,31 @@ export class BlogService {
         @InjectRepository(Blogs) private blogsRepository: Repository<Blogs>
     ) {}
 
-    async findAll(): Promise<Blogs[]> {
+    async findAll(page = 1, limit = 5) {
         try {
-            return await this.blogsRepository.find({
-                relations: ['user', 'blogCategory']
+            const skip = (page - 1) * limit;
+
+            const [data, total] = await this.blogsRepository.findAndCount({
+                relations: ['user', 'blogCategory'],
+                order: { createdAt: 'DESC' },
+                skip,
+                take: limit,
             });
+
+            return {
+                data,
+                meta: {
+                    total,
+                    page,
+                    limit,
+                    totalPages: Math.ceil(total / limit),
+                },
+            };
         } catch (error) {
             throw new HttpException(
-                `${error?.message}`,
-                HttpStatus.INTERNAL_SERVER_ERROR
-            )
+                error.message,
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
         }
     }
 
