@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { forwardRef, HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { Users } from './users.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -11,7 +11,7 @@ import { AuthService } from 'src/auth/auth.service';
 @Injectable()
 export class UserService {
   constructor(
-    private authService: AuthService,
+    @Inject(forwardRef(() => AuthService)) private authService: AuthService,
     @InjectRepository(Users) private usersRepository: Repository<Users>,
     @InjectRepository(Roles) private rolesRepository: Repository<Roles>,
   ) {}
@@ -101,6 +101,39 @@ export class UserService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async findUserByEmail(email: string): Promise<Users|null> {
+    try {
+      return await this.usersRepository.findOne({
+        where: {
+          email: email
+        }
+      })
+    } catch (error) {
+      throw new HttpException(
+        `${error?.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR
+      )
+    }
+  }
+
+  async findById(id: number): Promise<Users|null> {
+    try {
+      return await this.usersRepository.findOne({ where: { id: id }})
+    } catch (error) {
+      throw new HttpException(
+        `${error?.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR
+      )
+    }
+  }
+
+  async updatePassword(userId: number, password: string) {
+    return this.usersRepository.update(
+      { id: userId },
+      { password },
+    );
   }
   
   

@@ -10,6 +10,7 @@ import { BlogModule } from './components/blog/blog.module';
 import { ConfigModule } from '@nestjs/config';
 import { BlogSliderModule } from './components/blog-slider/blog-slider.module';
 import { BlogTestimonialModule } from './components/blog-testimonial/blog-testimonial.module';
+import { MailModule } from './utilities/mail/mail.module';
 
 @Module({
   imports: [
@@ -33,7 +34,8 @@ import { BlogTestimonialModule } from './components/blog-testimonial/blog-testim
     BlogCategoryModule,
     BlogModule,
     BlogSliderModule,
-    BlogTestimonialModule
+    BlogTestimonialModule,
+    MailModule
   ],
   controllers: [AppController],
   providers: [AppService],
