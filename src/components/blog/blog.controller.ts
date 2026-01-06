@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Put, Query } from '@nestjs/common';
 import { BlogService } from './blog.service';
 import { CreateBlogDto } from './blog.dto';
 import { Blogs } from './blog.entity';
@@ -32,5 +32,13 @@ export class BlogController {
   @Post()
   async create(@Body() blogsDto: CreateBlogDto): Promise<Blogs|undefined> {
     return await this.blogService.create(blogsDto);
+  }
+
+  @Put(":id")
+  async update(
+    @Param("id", ParseIntPipe) id: number,
+    @Body() body: any
+  ) {
+    return await this.blogService.update(id, body);
   }
 }

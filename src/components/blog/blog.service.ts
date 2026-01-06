@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { BlogsCategoriesDto } from '../blog-category/blog-category.dto';
 import { Blogs } from './blog.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -83,6 +83,23 @@ export class BlogService {
             }
             throw new HttpException(
                 `${error.message}`,
+                HttpStatus.INTERNAL_SERVER_ERROR
+            )
+        }
+    }
+
+    async update(id: number, data: any) {
+        try {
+            const blog = await this.blogsRepository.findOne({ where: { id } });
+    
+            if (!blog) throw new NotFoundException("Blog not found");
+    
+            Object.assign(blog, data);
+    
+            return this.blogsRepository.save(blog);
+        } catch (error) {
+            throw new HttpException(
+                `${error?.message}`,
                 HttpStatus.INTERNAL_SERVER_ERROR
             )
         }

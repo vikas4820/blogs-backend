@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { BlogCategoryService } from './blog-category.service';
 import { BlogsCategoriesDto } from './blog-category.dto';
 import { BlogsCategories } from './blog-category.entity';
@@ -13,8 +13,34 @@ export class BlogCategoryController {
   }
 
   @Get()
-  async findAll() {
-    return await this.blogCategoryService.findAll();
+  async findAll(
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+  ) {
+    if (!page || !limit) {
+      return await this.blogCategoryService.findAll();
+    }
+
+    page = +page;
+    limit = +limit;
+
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await this.blogCategoryService.findAndCount({
+      order: { createdAt: 'DESC' },
+      skip,
+      take: limit,
+    });
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 
   @Get('count')

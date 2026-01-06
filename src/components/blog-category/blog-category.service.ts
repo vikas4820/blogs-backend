@@ -41,6 +41,17 @@ export class BlogCategoryService {
         }
     }
 
+    async findAndCount(options) {
+        try {
+            return await this.blogsCategoryRepository.findAndCount(options);
+        } catch (error) {
+            throw new HttpException(
+                `${error.message}`,
+                HttpStatus.INTERNAL_SERVER_ERROR
+            )
+        }
+    }
+
     async findOne(id: number): Promise<BlogsCategories|null> {
         try {
             return await this.blogsCategoryRepository.findOne({
