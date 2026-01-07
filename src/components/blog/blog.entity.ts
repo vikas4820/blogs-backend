@@ -32,6 +32,9 @@ export class Blogs extends BaseEntity {
   @Column({ nullable: true })
   featuredImage: string;
 
+  @Column('simple-array', { nullable: true })
+  images: string[];
+
   @Column({ length: 200, nullable: true })
   metaTitle: string;
 
