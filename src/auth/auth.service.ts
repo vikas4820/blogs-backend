@@ -39,7 +39,7 @@ export class AuthService {
         type: 'RESET_PASSWORD',
       },
       {
-        secret: process.env.JWT_RESET_SECRET,
+        secret: process.env.JWT_RESET_SECRET || 'super_secure_reset_secret',
         expiresIn: '15m',
       },
     );
@@ -72,7 +72,7 @@ export class AuthService {
   async verifyResetToken(token: string) {
     try {
       return this.jwtService.verify(token, {
-        secret: process.env.JWT_RESET_SECRET,
+        secret: process.env.JWT_RESET_SECRET || 'super_secure_reset_secret',
       });
     } catch {
       throw new BadRequestException('Invalid or expired token');
@@ -84,7 +84,7 @@ export class AuthService {
 
     try {
       payload = this.jwtService.verify(token, {
-        secret: process.env.JWT_RESET_SECRET,
+        secret: process.env.JWT_RESET_SECRET || 'super_secure_reset_secret',
       });
     } catch {
       throw new BadRequestException('Invalid or expired token');
