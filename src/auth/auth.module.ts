@@ -9,7 +9,8 @@ import { MailModule } from 'src/utilities/mail/mail.module';
 @Module({
   imports: [
     JwtModule.register({
-      secret: process.env.JWT_RESET_SECRET || 'super_secure_reset_secret',
+      // secret: process.env.JWT_RESET_SECRET || 'super_secure_reset_secret',
+      secret: 'super_secure_reset_secret',
       signOptions: { expiresIn: '60m' },
     }),
     forwardRef(() => UserModule),

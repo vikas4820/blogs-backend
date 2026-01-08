@@ -26,7 +26,7 @@ export class BlogController {
   constructor(private readonly blogService: BlogService) {}
 
   @Get()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard) 
   @Roles('admin', 'user')
   async findAll(
     @Req() req: any, 
