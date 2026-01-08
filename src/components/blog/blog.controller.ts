@@ -55,8 +55,6 @@ export class BlogController {
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
-  @Roles('admin', 'user')
   async findOne(@Param('id') id: number) {
     return await this.blogService.findOne(id);
   }
