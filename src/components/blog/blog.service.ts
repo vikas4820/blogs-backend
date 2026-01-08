@@ -23,17 +23,31 @@ export class BlogService {
     @InjectRepository(Users) private userRepository: Repository<Users>,
   ) {}
 
-  async findAll(page = 1, limit = 5) {
+  async findAll(
+    roles: string[],
+    userId: number,
+    page = 1,
+    limit = 5,
+  ) {
     try {
       const skip = (page - 1) * limit;
-
-      const [data, total] = await this.blogsRepository.findAndCount({
+  
+      const query: any = {
         relations: ['user', 'blogCategory'],
         order: { createdAt: 'DESC' },
         skip,
         take: limit,
-      });
-
+      };
+  
+      if (!roles.includes('admin')) {
+        query.where = {
+          user: { id: userId }, 
+        };
+      }
+  
+      const [data, total] =
+        await this.blogsRepository.findAndCount(query);
+  
       return {
         data,
         meta: {
@@ -44,31 +58,88 @@ export class BlogService {
         },
       };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        error.message,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+  
+  async findAllPublic(
+    page = 1,
+    limit = 5,
+  ) {
+    try {
+      const skip = (page - 1) * limit;
+  
+      const query: any = {
+        relations: ['user', 'blogCategory'],
+        order: { createdAt: 'DESC' },
+        skip,
+        take: limit,
+      };
+  
+      const [data, total] = await this.blogsRepository.findAndCount(query);
+  
+      return {
+        data,
+        meta: {
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+        },
+      };
+    } catch (error) {
+      throw new HttpException(
+        error.message,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
-  async getAllCount(): Promise<{
+  async getAllCount(
+    roles: string[],
+    userId: number,
+  ): Promise<{
     all: number;
     active: number;
     inactive: number;
   }> {
     try {
-      const allCount = await this.blogsRepository.count();
-      const activeCount = await this.blogsRepository.count({
-        where: { status: 'active' },
+      const baseWhere: any = {};
+  
+      if (!roles.includes('admin')) {
+        baseWhere.user = { id: userId };
+      }
+  
+      const all = await this.blogsRepository.count({
+        where: baseWhere,
       });
-      const inactiveCount = await this.blogsRepository.count({
-        where: { status: 'inactive' },
+  
+      const active = await this.blogsRepository.count({
+        where: {
+          ...baseWhere,
+          status: 'active',
+        },
       });
-      return { all: allCount, active: activeCount, inactive: inactiveCount };
+  
+      const inactive = await this.blogsRepository.count({
+        where: {
+          ...baseWhere,
+          status: 'inactive',
+        },
+      });
+  
+      return { all, active, inactive };
     } catch (error) {
       throw new HttpException(
-        `${error?.message || 'Error retrieving blog category counts'}`,
+        error?.message || 'Error retrieving blog counts',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
+  
 
   async findOne(id: number): Promise<Blogs | null> {
     try {

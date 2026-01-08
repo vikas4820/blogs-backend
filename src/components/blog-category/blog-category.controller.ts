@@ -1,7 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { BlogCategoryService } from './blog-category.service';
 import { BlogsCategoriesDto } from './blog-category.dto';
 import { BlogsCategories } from './blog-category.entity';
+import { JwtAuthGuard } from 'src/guards/roles/jwt-auth.guard';
+import { Roles } from 'src/auth/roles.decorator';
 
 @Controller('blog-category')
 export class BlogCategoryController {
@@ -49,6 +51,8 @@ export class BlogCategoryController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  @Roles('admin')
   async findOne(
     @Param('id') id: number
   ) {
@@ -56,6 +60,8 @@ export class BlogCategoryController {
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard)
+  @Roles('admin')
   async update(
     @Param('id') id: number,
     @Body() createBlogCategoryDto: BlogsCategoriesDto
@@ -64,6 +70,8 @@ export class BlogCategoryController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @Roles('admin')
   async removeCategory(
     @Param('id') id: number
   ) {

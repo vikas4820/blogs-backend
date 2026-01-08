@@ -26,21 +26,44 @@ export class BlogController {
   constructor(private readonly blogService: BlogService) {}
 
   @Get()
-  async findAll(@Req() req: any, @Query('page') page = 1, @Query('limit') limit = 5) {
-    return await this.blogService.findAll(+page, +limit);
+  @UseGuards(JwtAuthGuard)
+  @Roles('admin', 'user')
+  async findAll(
+    @Req() req: any, 
+    @Query('page') page = 1, 
+    @Query('limit') limit = 5
+  ) {
+    const { roles, userId } = req.user;
+    return await this.blogService.findAll(roles, userId, +page, +limit);
+  }
+
+  @Get('public-blogs')
+  async findAllPublic(
+    @Req() req: any, 
+    @Query('page') page = 1, 
+    @Query('limit') limit = 5
+  ) {
+    return await this.blogService.findAllPublic(+page, +limit);
   }
 
   @Get('count')
-  async getAllCount() {
-    return await this.blogService.getAllCount();
+  @UseGuards(JwtAuthGuard)
+  @Roles('admin', 'user')
+  async getAllCount(@Req() req: any) {
+    const { roles, userId } = req.user;
+    return await this.blogService.getAllCount(roles, userId);
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  @Roles('admin', 'user')
   async findOne(@Param('id') id: number) {
     return await this.blogService.findOne(id);
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
+  @Roles('admin', 'user')
   @UseInterceptors(
     FilesInterceptor('images', 3, {
       storage: multer.memoryStorage(),
@@ -55,8 +78,8 @@ export class BlogController {
   }
 
   @Put(':id')
-  // @UseGuards(JwtAuthGuard)
-  // @Roles('admin', 'user')
+  @UseGuards(JwtAuthGuard)
+  @Roles('admin', 'user')
   @UseInterceptors(
     FilesInterceptor('images', 3, {
       storage: multer.memoryStorage(),
@@ -71,6 +94,8 @@ export class BlogController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @Roles('admin')
   async deleteBlog(@Param('id', ParseIntPipe) id: number) {
     const result = await this.blogService.delete(id);
     return result;
